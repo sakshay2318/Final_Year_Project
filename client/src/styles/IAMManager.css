@@ -1,0 +1,185 @@
+body {
+    font-family: 'Bogle', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1E201E; /* Dark background */
+    color: #ECDFCC; /* Light text color */
+}
+
+h2, h3 {
+    text-align: center;
+    color: #ECDFCC;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #3C3D37; /* Slightly lighter background */
+    border-radius: 8px;
+    padding: 20px;
+    width: 40%;
+    margin: 20px auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+form input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #697565;
+    border-radius: 5px;
+    background-color: #1E201E;
+    color: #ECDFCC;
+}
+
+form input::placeholder {
+    color: #697565;
+}
+
+form button {
+    padding: 10px 20px;
+    margin-top: 15px;
+    background-color: #697565;
+    color: #ECDFCC;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #3C3D37;
+}
+
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #3C3D37;
+    color: #ECDFCC;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+table thead {
+    background-color: #697565;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #1E201E;
+}
+
+table th {
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #1E201E;
+}
+
+table tr:hover {
+    background-color: #697565;
+    color: #ECDFCC;
+}
+
+.dialog {
+    position: fixed;
+    border: 3px solid rgb(0, 0, 0);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(141, 141, 141);
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.dialog label {
+    display: block;
+    margin: 8px 0 4px;
+}
+
+.dialog input {
+    width: 90%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.dialog button {
+    padding: 8px 23px;
+    margin: 3px;
+    border: none;
+    background-color: #4CAF50;
+    border: 2px solid rgb(0, 0, 0);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dialog button:hover {
+    background-color: #45a049;
+}
+
+.retrievedDataBox {
+    margin-top: 20px;
+    background-color: #fde5e5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.retrievedDataBox pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #333;
+    color: #f9f9f9;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.retrievedDataDialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #817f7f;
+    border-width: medium;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    width: 400px;
+}
+
+.retrievedDataDialog pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #333;
+    color: #f9f9f9;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.retrievedDataDialog button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.retrievedDataDialog button:hover {
+    background-color: #45a049;
+}
+
