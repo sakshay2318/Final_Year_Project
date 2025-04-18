@@ -32,3 +32,6 @@ yarn-error.log*
 
 venv
 
+# Models
+backend/face_recognition/models
+
