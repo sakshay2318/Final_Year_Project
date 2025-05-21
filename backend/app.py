@@ -4,7 +4,7 @@ import logging
 import os
 import subprocess
 from datetime import datetime
-
+from ai_agents import start_all_agents
 import pandas as pd  # Add this for processing log data
 import requests
 from blockchain import get_data_from_blockchain
@@ -18,6 +18,11 @@ logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__, static_folder='../client/build', static_url_path='/')
 CORS(app)
+
+@app.before_first_request
+def bootstrap_agents():
+    """Start our AI monitoring agents in the background."""
+    start_all_agents()
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -42,6 +47,8 @@ def upload():
 
         # Ensure transformed_data is a dictionary
         ipfs_hash = transformed_data.get('ipfs_hash')
+        filename = transformed_data.get('filename')
+        mimetype = transformed_data.get('mimetype')
         if not ipfs_hash:
             raise Exception("ETL pipeline did not return a valid IPFS hash.")
 
@@ -49,7 +56,9 @@ def upload():
         pipeline_data = {
             "pipelineName": pipeline_name,
             "employee_id": employee_id,
-            "ipfsHash": ipfs_hash
+            "ipfsHash": ipfs_hash,
+            "filename": filename,
+            "mimetype": mimetype
         }
         record_id = save_pipeline(pipeline_data)
 
@@ -109,52 +118,61 @@ def retrieve():
     security_level = request.json.get('security_level')
     record_id = request.json.get('record_id')
     ipfs_hash = request.json.get('ipfs_hash')
+    
+
 
     try:
         logging.info(f"Received retrieve request: employee_id={employee_id}, "
                     f"security_level={security_level}, record_id={record_id}, ipfs_hash={ipfs_hash}")
 
-        # Validate input
         if not employee_id or security_level is None or not record_id or not ipfs_hash:
             raise ValueError("Employee ID, Security Level, Record ID, and IPFS Hash are required.")
 
-        # Validate employee and security level
         employee = get_employee_by_id(employee_id)
         if not employee or int(employee['securityLevel']) != int(security_level):
             raise PermissionError("Invalid Employee ID or Security Level mismatch.")
 
-        # Retrieve from IPFS
         ipfs_url = f"{IPFS_RETRIEVE_URL}/{ipfs_hash}"
         logging.info(f"Retrieving data from IPFS URL: {ipfs_url}")
         response = requests.get(ipfs_url)
 
         if response.status_code != 200:
             raise ConnectionError(f"Failed to retrieve data from IPFS: {response.status_code} - {response.text}")
+        
+        with open("access_log.jsonl", "a") as f:
+            f.write(json.dumps({
+                "timestamp": datetime.time(),
+                "employee_id": employee_id,
+                "record_id": record_id,
+                "success": response.status_code == 200
+            }) + "\n")
 
         encrypted_data = response.content
         logging.info(f"Retrieved {len(encrypted_data)} bytes of encrypted data from IPFS.")
 
-        # Decrypt data
         decrypted_data = decrypt_data(encrypted_data, security_level)
         logging.info("Data decrypted successfully.")
 
-        try:
-            decoded_data = decrypted_data.decode('utf-8')
-            return jsonify({
-                "message": "Data retrieved and decrypted successfully.",
-                "data": decoded_data
-            })
-        except UnicodeDecodeError:
-            logging.info("Decrypted data is binary, sending as a file.")
-            return send_file(
-                io.BytesIO(decrypted_data),
-                mimetype='application/octet-stream',
-                as_attachment=True,
-                download_name="retrieved_file"
-            )
+        # Fetch file metadata using record_id
+        pipelines = get_pipelines()
+        matched_pipeline = next((p for p in pipelines if p.get('record_id') == record_id), None)
+
+        if not matched_pipeline:
+            raise ValueError("No pipeline record found for the provided record ID.")
+
+        filename = matched_pipeline.get('filename', 'downloaded_file')
+        mimetype = matched_pipeline.get('mimetype', 'application/octet-stream')
+
+        return send_file(
+            io.BytesIO(decrypted_data),
+            mimetype=mimetype,
+            as_attachment=True,
+            download_name=filename
+        )
     except Exception as e:
         logging.error(f"Error in /retrieve: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/employees', methods=['GET'])
 def fetch_employees():

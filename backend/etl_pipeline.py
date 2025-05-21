@@ -29,7 +29,7 @@ def get_pipelines():
             if not isinstance(pipelines, list):  # Safeguard for data corruption
                 raise ValueError("Pipelines data is not a valid list.")
             return pipelines
-    except (FileNotFoundError, ValueError) as e:
+    except(FileNotFoundError, ValueError) as e:
         return []
 
 def encrypt_data(data, security_level):
@@ -77,13 +77,19 @@ def load_data(ipfs_hash, security_level):
     """Store IPFS hash and security level in the blockchain."""
     store_to_blockchain(ipfs_hash, security_level)  # Pass both IPFS hash and security level
 
-# In etl_pipeline.py
 def run_etl_pipeline(file, security_level):
-    """Run the ETL pipeline."""
+    """Run the ETL pipeline with filename and content type."""
+    filename = file.filename
+    mimetype = file.mimetype
     data = extract_data(file)
     ipfs_hash = transform_data(data, security_level)
-    load_data(ipfs_hash, security_level)  # Pass both ipfs_hash and security_level
-    return {"ipfs_hash": ipfs_hash}  # Ensure returned object is a dictionary
+    load_data(ipfs_hash, security_level)
+    return {
+        "ipfs_hash": ipfs_hash,
+        "filename": filename,
+        "mimetype": mimetype
+    }
+
 
 # def retrieve_from_pipeline(record_id):
 #     """Retrieve and decrypt data."""

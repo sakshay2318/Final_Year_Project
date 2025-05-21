@@ -74,7 +74,9 @@ const PipelineForm = () => {
                 security_level: parseInt(securityLevel),
                 record_id: selectedPipeline.record_id,
                 ipfs_hash: selectedPipeline.ipfsHash,
-            });
+            },
+            { responseType: "blob" }      // <-- important!
+            );
     
             if (response.data.data) {
                 // If the response contains text data
@@ -90,6 +92,22 @@ const PipelineForm = () => {
                 link.click();
                 URL.revokeObjectURL(url);
             }
+            // Try to parse a filename out of the header:
+            const disposition = response.headers["content-disposition"] || "";
+            let fname = selectedPipeline.filename || "downloaded_file";
+            const match = disposition.match(/filename="?(.+?)"?(;|$)/);
+            if (match) fname = match[1];
+
+            // Download the blob with correct name & type:
+            const blob = new Blob([response.data], { type: response.data.type || selectedPipeline.mimetype });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = fname;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
         } catch (error) {
             const errorMsg = error.response?.data?.error || "An unexpected error occurred.";
             alert("Error retrieving file: " + errorMsg);
@@ -154,20 +172,20 @@ const PipelineForm = () => {
                     <h3>Retrieve File</h3>
                     <div>
                         <label>Employee ID:</label>
-                        <input 
-                            type="text" 
-                            value={employeeId} 
-                            onChange={(e) => setEmployeeId(e.target.value)} 
-                            placeholder="Enter Employee ID" 
+                        <input
+                            type="text"
+                            value={employeeId}
+                            onChange={(e) => setEmployeeId(e.target.value)}
+                            placeholder="Enter Employee ID"
                         />
                     </div>
                     <div>
                         <label>Security Level:</label>
-                        <input 
-                            type="number" 
-                            value={securityLevel} 
-                            onChange={(e) => setSecurityLevel(e.target.value)} 
-                            placeholder="Enter Security Level" 
+                        <input
+                            type="number"
+                            value={securityLevel}
+                            onChange={(e) => setSecurityLevel(e.target.value)}
+                            placeholder="Enter Security Level"
                         />
                     </div>
                     <button onClick={handleRetrieveFile}>Retrieve</button>

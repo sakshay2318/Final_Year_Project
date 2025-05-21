@@ -1,6 +1,7 @@
 import json
 import requests
 from config import IPFS_API_URL
+import os
 
 EMPLOYEE_FILE = "employees.json"
 
@@ -53,5 +54,45 @@ def delete_employee_from_list(employee_id):
             json.dump(filtered_employees, file)
         return True
     return False
+
+# iam.py (append at bottom)
+
+LOCKED_FILE = "locked_users.json"
+
+def enroll_mfa(employee_id):
+    """Mark an employee as requiring MFA on next login."""
+    data = get_employees()
+    for emp in data:
+        if emp["employee_id"] == employee_id:
+            emp["require_mfa"] = True
+    with open(EMPLOYEE_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+    update_employee_file()  # push to IPFS
+
+def lock_employee(employee_id):
+    """Lock an employee's account temporarily."""
+    try:
+        locked = []
+        if os.path.exists(LOCKED_FILE):
+            locked = json.load(open(LOCKED_FILE))
+        if employee_id not in locked:
+            locked.append(employee_id)
+            with open(LOCKED_FILE, "w") as f:
+                json.dump(locked, f, indent=2)
+            # Optionally notify front-end or write to blockchain
+    except Exception as e:
+        print(f"Failed to lock {employee_id}: {e}")
+        
+def set_security_level(employee_id, level):
+    """Update an employee’s securityLevel and persist via IPFS."""
+    emps = get_employees()
+    for e in emps:
+        if e["employee_id"] == employee_id:
+            e["securityLevel"] = level
+    with open(EMPLOYEE_FILE, "w") as f:
+        json.dump(emps, f)
+    update_employee_file()
+
+
 
 

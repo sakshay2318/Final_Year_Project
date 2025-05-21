@@ -1,1 +1,34 @@
-[{"name": "Alice Johnson", "employee_id": "emp03", "securityLevel": 4, "department": "Analytics", "role": "Data Analyst", "email": "alice.johnson@example.com"}, {"name": "Akshay S", "employee_id": "emp001", "securityLevel": 6, "department": "Cyber Security", "role": "InfoSec Software Developer", "email": "tricksandtechnique@gmail.com"}, {"name": "Alisha", "employee_id": "emp010", "securityLevel": 1, "department": "Cyber Security", "role": "Electrica Engg", "email": "msatyanarayana.opto@gmail.com"}, {"name": "Abdur", "employee_id": "emp002", "securityLevel": 4, "department": "Sec Web Dev", "role": "SIEM ", "email": "abdur@gmail.com"}]
+[
+    {
+        "name": "Alice Johnson",
+        "employee_id": "emp03",
+        "securityLevel": 4,
+        "department": "Analytics",
+        "role": "Data Analyst",
+        "email": "alice.johnson@example.com"
+    },
+    {
+        "name": "Akshay S",
+        "employee_id": "emp001",
+        "securityLevel": 6,
+        "department": "Cyber Security",
+        "role": "InfoSec Software Developer",
+        "email": "tricksandtechnique@gmail.com"
+    },
+    {
+        "name": "Alisha",
+        "employee_id": "emp010",
+        "securityLevel": 1,
+        "department": "Cyber Security",
+        "role": "Electrica Engg",
+        "email": "msatyanarayana.opto@gmail.com"
+    },
+    {
+        "name": "Abdur",
+        "employee_id": "emp002",
+        "securityLevel": 4,
+        "department": "Sec Web Dev",
+        "role": "SIEM ",
+        "email": "abdur@gmail.com"
+    }
+]
